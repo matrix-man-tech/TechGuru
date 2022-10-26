@@ -22,9 +22,9 @@ const {
  } = require('../../controllers/users/userController')
 const authMiddleware = require('../../middleware/auth/authMiddleware')
 const {
-    profilePhotoUpload,
+    photoUpload,
     profilePhotoResize
-    } = require('../../middleware/upload/profilePhotoUpload')
+    } = require('../../middleware/upload/photoUpload')
 
 
 const userRoutes = express.Router()
@@ -34,7 +34,7 @@ userRoutes.post('/login',loginUserCtrl)
 userRoutes.put(
     '/profilephoto-upload',
     authMiddleware,
-    profilePhotoUpload.single('image'),
+    photoUpload.single('image'),
     profilePhotoResize,
     profilePhotoUploadCtrl)
 userRoutes.get('/profile/:id',authMiddleware, userProfileCtrl)
