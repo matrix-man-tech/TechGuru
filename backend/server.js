@@ -4,6 +4,7 @@ const dbConnect = require('./config/db/dbConnect')
 const userRoutes = require("./routes/users/userRoutes")
 const { notFound, errorHandler } = require("./middleware/error/errorHandler")
 const authMiddleware = require("./middleware/auth/authMiddleware")
+const postRoutes = require('./routes/posts/postRoutes')
 
 const app = express()
 dotenv.config()
@@ -12,6 +13,7 @@ dbConnect()
 
 app.use(express.json())
 app.use('/api/users',userRoutes)
+app.use('/api/posts',postRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
