@@ -1,4 +1,5 @@
 require('dotenv').config()
+const fs = require('fs')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const sgMail = require('@sendgrid/mail')
@@ -50,7 +51,6 @@ const loginUserCtrl = expressAsyncHandler(async (req,res)=>{
             isAdmin:userFound?.isAdmin,
             token:generateToken(userFound?._id)
             
-            
         })
     }
     else{
@@ -95,6 +95,7 @@ const userProfileCtrl = expressAsyncHandler(async(req,res)=>{
     validateMongodbId(id)
     try {
         const myProfile = await User.findById(id)
+            .populate('posts')
         res.json(myProfile)
     } catch (error) {
         res.json(error)
@@ -309,10 +310,20 @@ const passwordResetCtrl = expressAsyncHandler(async(req,res)=>{
 })
 
 const profilePhotoUploadCtrl = expressAsyncHandler(async(req,res)=>{
+    const {_id } = req.user
+
     const localPath = `public/images/profile/${req.file.filename}`
     const imageUpload =  await cloudinaryUploading(localPath)
-    console.log(imageUpload);
-    res.json(localPath)
+    const foundUser = await User.findByIdAndUpdate(_id,
+        {
+            profilePhoto: imageUpload?.url
+        },
+        {
+            new:true
+        })
+    fs.unlinkSync(localPath)
+    res.json(foundUser)
+    
 })
 
 module.exports = {
